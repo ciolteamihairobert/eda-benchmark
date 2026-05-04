@@ -12,11 +12,10 @@ scrape_configs:
     static_configs:
       - targets: ["kafka-exporter:9308"]
 
-  # Uncomment in P2 after the .NET service is running
-  # - job_name: dotnet-service
-  #   static_configs:
-  #     - targets: ["dotnet-service:8080"]
-  #   metrics_path: /metrics
+  - job_name: dotnet-service
+    static_configs:
+      - targets: ["dotnet-service:8080"]
+    metrics_path: /metrics
 
   # Uncomment in P3 after the Go service is running
   # - job_name: go-service

@@ -131,21 +131,29 @@ services:
       - eda-net
 
   # ── .NET service (P2) ─────────────────────────────────────────────────────
-  # Uncomment after completing Phase 2
-  # dotnet-service:
-  #   build:
-  #     context: ../services/dotnet
-  #     dockerfile: Dockerfile
-  #   container_name: dotnet-service
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     KAFKA__BOOTSTRAPSERVERS: kafka:29092
-  #   depends_on:
-  #     kafka-init:
-  #       condition: service_completed_successfully
-  #   networks:
-  #     - eda-net
+  dotnet-service:
+    build:
+      context: ../services/dotnet
+      dockerfile: Dockerfile
+    container_name: dotnet-service
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      Kafka__BootstrapServers: kafka:29092
+      Fault__DelayMs: "0"
+      Fault__FailRate: "0.0"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - eda-net
 
   # ── Go service (P3) ───────────────────────────────────────────────────────
   # Uncomment after completing Phase 3
