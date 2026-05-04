@@ -1,0 +1,63 @@
+# ─── .NET ────────────────────────────────────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.vsidx
+*.vsp
+*.vspx
+*.sap
+publish/
+*.nettrace
+*.speedscope.json
+
+# ─── Go ──────────────────────────────────────────────────────────────────────
+vendor/
+*.exe
+*.test
+*.pprof
+cpu.out
+mem.out
+trace.out
+
+# ─── Docker ──────────────────────────────────────────────────────────────────
+# Ignore named volume mounts if ever bind-mounted locally
+prometheus-data/
+grafana-data/
+
+# ─── k6 results ──────────────────────────────────────────────────────────────
+# Keep monitoring dashboard JSON; ignore k6 output
+results/*.json
+results/*.csv
+# Do NOT ignore monitoring/**/*.json (Grafana dashboards are source-controlled)
+!infrastructure/monitoring/**/*.json
+
+# ─── Profiling output ────────────────────────────────────────────────────────
+*.nettrace
+*.pprof
+*.speedscope
+profile.cov
+
+# ─── OS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── IDE ─────────────────────────────────────────────────────────────────────
+.idea/
+# Keep VSCode recommended extensions; ignore personal settings
+.vscode/*
+!.vscode/extensions.json
+*.code-workspace
+
+# ─── Misc ────────────────────────────────────────────────────────────────────
+*.log
+*.tmp
+.env
+.env.local
