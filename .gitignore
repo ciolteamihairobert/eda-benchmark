@@ -55,6 +55,9 @@ desktop.ini
 .vscode/*
 !.vscode/extensions.json
 *.code-workspace
+.venv/
+.analysis/data/*
+.analysis/output/*
 
 # ─── Misc ────────────────────────────────────────────────────────────────────
 *.log
