@@ -156,18 +156,27 @@ services:
       - eda-net
 
   # ── Go service (P3) ───────────────────────────────────────────────────────
-  # Uncomment after completing Phase 3
-  # go-service:
-  #   build:
-  #     context: ../services/go
-  #     dockerfile: Dockerfile
-  #   container_name: go-service
-  #   ports:
-  #     - "8081:8081"
-  #   environment:
-  #     KAFKA_BROKERS: kafka:29092
-  #   depends_on:
-  #     kafka-init:
-  #       condition: service_completed_successfully
-  #   networks:
-  #     - eda-net
+  go-service:
+    build:
+      context: ../services/go
+      dockerfile: Dockerfile
+    container_name: go-service
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    ports:
+      - "8081:8081"
+    environment:
+      KAFKA_BOOTSTRAP: kafka:29092
+      FAULT_DELAY_MS: "0"
+      FAULT_FAIL_RATE: "0.0"
+      WORKER_COUNT: "10"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - eda-net

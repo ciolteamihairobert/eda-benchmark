@@ -17,8 +17,7 @@ scrape_configs:
       - targets: ["dotnet-service:8080"]
     metrics_path: /metrics
 
-  # Uncomment in P3 after the Go service is running
-  # - job_name: go-service
-  #   static_configs:
-  #     - targets: ["go-service:8081"]
-  #   metrics_path: /metrics
+  - job_name: go-service
+    static_configs:
+      - targets: ["go-service:8081"]
+    metrics_path: /metrics
