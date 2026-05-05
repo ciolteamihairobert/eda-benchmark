@@ -5,16 +5,24 @@
 ##############################################################################
 
 COMPOSE_FILE := infrastructure/docker-compose.yml
+BENCH_DIR    := benchmarks
 # Allow overrides:  make k6-baseline DOTNET_URL=http://...
 DOTNET_URL   ?= http://localhost:8080
 GO_URL       ?= http://localhost:8081
 PROM_RW_URL  ?= http://localhost:9090/api/v1/write
 
-K6_OPTS      := --out experimental-prometheus-rw \
+K6_OPTS      := --out experimental-prometheus-rw=$(PROM_RW_URL) \
                 -e DOTNET_URL=$(DOTNET_URL) \
-                -e GO_URL=$(GO_URL)
+                -e GO_URL=$(GO_URL) \
+                -e PROM_RW_URL=$(PROM_RW_URL)
 
-.PHONY: up down restart logs kafka-topics verify-env k6-baseline k6-spike clean
+PROFILE_ENV  := GO_URL=$(GO_URL)
+
+.PHONY: up down restart logs kafka-topics verify-env \
+        k6-baseline k6-spike \
+        bench-steady bench-spike bench-fault-delay bench-fault-restart bench-fault-outage bench-all \
+        profile-dotnet profile-go-cpu profile-go-mem devex \
+        clean
 
 ## ── Docker Compose ──────────────────────────────────────────────────────────
 
@@ -83,9 +91,47 @@ k6-spike:
 		-e SCENARIO=spike \
 		infrastructure/k6/baseline.js
 
+## ── P4 benchmark suite ──────────────────────────────────────────────────────
+
+bench-steady:
+	k6 run $(K6_OPTS) $(BENCH_DIR)/steady-state/steady-state.js
+
+bench-spike:
+	k6 run $(K6_OPTS) $(BENCH_DIR)/spike/spike.js
+
+bench-fault-delay:
+	k6 run $(K6_OPTS) $(BENCH_DIR)/fault/network-delay.js
+
+bench-fault-restart:
+	k6 run $(K6_OPTS) $(BENCH_DIR)/fault/consumer-restart.js
+
+bench-fault-outage:
+	k6 run $(K6_OPTS) $(BENCH_DIR)/fault/broker-outage.js
+
+bench-all:
+	bash $(BENCH_DIR)/run-all.sh
+
+## ── Profiling ───────────────────────────────────────────────────────────────
+
+profile-dotnet:
+	bash $(BENCH_DIR)/profiling/dotnet-trace.sh
+
+profile-go-cpu:
+	$(PROFILE_ENV) bash $(BENCH_DIR)/profiling/pprof-cpu.sh
+
+profile-go-mem:
+	$(PROFILE_ENV) bash $(BENCH_DIR)/profiling/pprof-mem.sh
+
+## ── Developer experience ────────────────────────────────────────────────────
+
+devex:
+	bash $(BENCH_DIR)/devex/measure.sh
+
 ## ── Cleanup ─────────────────────────────────────────────────────────────────
 
 clean:
 	docker compose -f $(COMPOSE_FILE) down -v --remove-orphans
-	rm -rf results/
+	rm -rf results/ $(BENCH_DIR)/results/*.json $(BENCH_DIR)/results/*.pprof \
+	       $(BENCH_DIR)/results/*.svg $(BENCH_DIR)/results/*.nettrace \
+	       $(BENCH_DIR)/results/*.txt
 	@echo "Volumes removed and results cleared."
