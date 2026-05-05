@@ -149,30 +149,32 @@ def export_all(
     def qrl(query: str, label: str) -> pd.DataFrame:
         return query_range_labeled(query, label, start, end, step, prom_url)
 
-    k6_bucket = "k6_http_req_duration_milliseconds_bucket"
-
     # ── Latency percentiles ──────────────────────────────────────────────────
+    # .NET: HTTP request histogram from service metrics
+    # Go: order_processing_duration histogram (end-to-end Kafka processing latency)
     for pct_label, pct_val in [
         ("p50", 0.50), ("p75", 0.75), ("p90", 0.90), ("p95", 0.95), ("p99", 0.99)
     ]:
-        for svc in ("dotnet", "go"):
-            q = (
-                f"histogram_quantile({pct_val}, "
-                f'sum(rate({k6_bucket}{{service="{svc}"}}[1m])) by (le))'
-            )
-            _write_csv(qr(q), out_dir / f"latency_{pct_label}_{svc}.csv", "value_ms")
+        q_dotnet = (
+            f"histogram_quantile({pct_val}, "
+            f'rate(http_request_duration_seconds_bucket{{job="dotnet-service",endpoint="/orders"}}[1m])) * 1000'
+        )
+        _write_csv(qr(q_dotnet), out_dir / f"latency_{pct_label}_dotnet.csv", "value_ms")
+
+        q_go = (
+            f"histogram_quantile({pct_val}, "
+            f'rate(order_processing_duration_seconds_bucket{{job="go-service"}}[1m])) * 1000'
+        )
+        _write_csv(qr(q_go), out_dir / f"latency_{pct_label}_go.csv", "value_ms")
 
     # ── Throughput ────────────────────────────────────────────────────────────
-    for svc in ("dotnet", "go"):
-        q = f'sum(rate(k6_http_reqs_total{{service="{svc}"}}[1m]))'
+    for svc, job in [("dotnet", "dotnet-service"), ("go", "go-service")]:
+        q = f'rate(orders_received_total{{job="{job}"}}[1m])'
         _write_csv(qr(q), out_dir / f"throughput_{svc}.csv", "rps")
 
     # ── Error rate ────────────────────────────────────────────────────────────
-    for svc in ("dotnet", "go"):
-        q = (
-            f'sum(rate(k6_http_req_failed_total{{service="{svc}"}}[1m])) / '
-            f'sum(rate(k6_http_reqs_total{{service="{svc}"}}[1m]))'
-        )
+    for svc, job in [("dotnet", "dotnet-service"), ("go", "go-service")]:
+        q = f'rate(orders_failed_total{{job="{job}"}}[1m]) / rate(orders_received_total{{job="{job}"}}[1m])'
         _write_csv(qr(q), out_dir / f"error_rate_{svc}.csv", "rate")
 
     # ── CPU utilisation ───────────────────────────────────────────────────────
@@ -182,7 +184,7 @@ def export_all(
 
     # ── Heap memory ───────────────────────────────────────────────────────────
     _write_csv(
-        qr('dotnet_gc_heap_size_bytes{job="dotnet-service"}'),
+        qr('dotnet_total_memory_bytes{job="dotnet-service"}'),
         out_dir / "memory_heap_dotnet.csv",
         "bytes",
     )
@@ -235,7 +237,7 @@ if __name__ == "__main__":
     start_dt = _parse_ts(args.start)
     end_dt = _parse_ts(args.end)
 
-    print(f"Exporting metrics: {start_dt.isoformat()} → {end_dt.isoformat()}")
+    print(f"Exporting metrics: {start_dt.isoformat()} to {end_dt.isoformat()}")
     print(f"Prometheus: {args.prometheus}")
     print(f"Output:     {args.out}\n")
 

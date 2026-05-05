@@ -83,6 +83,14 @@ def _compute_test_result(
     dotnet_vals = dotnet_vals[~np.isnan(dotnet_vals)]
     go_vals = go_vals[~np.isnan(go_vals)]
 
+    if len(dotnet_vals) == 0 or len(go_vals) == 0:
+        return TestResult(
+            metric=metric, dotnet_mean=float("nan"), go_mean=float("nan"),
+            mean_diff=float("nan"), ci_low=float("nan"), ci_high=float("nan"),
+            u_stat=float("nan"), p_value=float("nan"), significant=False,
+            effect_size=float("nan"), effect_label="n/a", winner="n/a", unit=unit,
+        )
+
     dotnet_mean = float(np.mean(dotnet_vals))
     go_mean = float(np.mean(go_vals))
     mean_diff = dotnet_mean - go_mean

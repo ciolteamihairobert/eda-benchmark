@@ -13,11 +13,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     ./cmd/server
 
 # ── Stage 2: runtime ──────────────────────────────────────────────────────────
-FROM gcr.io/distroless/static-debian12 AS runtime
+FROM alpine:3.19 AS runtime
+RUN apk add --no-cache wget ca-certificates && \
+    addgroup -S app && adduser -S app -G app
 WORKDIR /app
 
 COPY --from=build /app/server .
 
-USER nonroot:nonroot
+USER app
 EXPOSE 8081
 ENTRYPOINT ["/app/server"]

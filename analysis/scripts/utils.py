@@ -132,5 +132,5 @@ def print_section(title: str) -> None:
     Args:
         title: Section title text.
     """
-    bar = "═" * (len(title) + 4)
+    bar = "=" * (len(title) + 4)
     print(f"\n{bar}\n  {title}\n{bar}")

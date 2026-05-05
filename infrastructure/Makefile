@@ -18,10 +18,14 @@ K6_OPTS      := --out experimental-prometheus-rw=$(PROM_RW_URL) \
 
 PROFILE_ENV  := GO_URL=$(GO_URL)
 
+DELAY     ?= 200
+FAIL_RATE ?= 0.5
+
 .PHONY: up down restart logs kafka-topics verify-env \
         k6-baseline k6-spike \
         bench-steady bench-spike bench-fault-delay bench-fault-restart bench-fault-outage bench-all \
         profile-dotnet profile-go-cpu profile-go-mem devex \
+        fault-consumer-restart fault-broker-stop fault-broker-start \
         clean
 
 ## ── Docker Compose ──────────────────────────────────────────────────────────
@@ -126,6 +130,24 @@ profile-go-mem:
 
 devex:
 	bash $(BENCH_DIR)/devex/measure.sh
+
+## ── Fault injection helpers ─────────────────────────────────────────────────
+# Inject network delay: edit FAULT_DELAY_MS / Fault__DelayMs in docker-compose.yml,
+# then run: make fault-consumer-restart  (services pick up the new env on restart).
+
+fault-consumer-restart:
+	docker compose -f $(COMPOSE_FILE) restart dotnet-service go-service
+	@echo "Services restarted — consumer groups are rebalancing."
+	@echo "Watch Grafana → 'Kafka Consumer Lag' panel for recovery."
+
+fault-broker-stop:
+	docker compose -f $(COMPOSE_FILE) stop kafka
+	@echo "Kafka stopped. Services will return errors until broker is restored."
+	@echo "Run 'make fault-broker-start' to restore."
+
+fault-broker-start:
+	docker compose -f $(COMPOSE_FILE) start kafka
+	@echo "Kafka started. Monitor Grafana for consumer group recovery."
 
 ## ── Cleanup ─────────────────────────────────────────────────────────────────
 
