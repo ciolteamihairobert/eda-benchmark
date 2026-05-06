@@ -109,12 +109,11 @@ def _compute_test_result(
     ci_low, ci_high = float(np.percentile(diffs, 2.5)), float(np.percentile(diffs, 97.5))
 
     if _HAS_PINGOUIN:
-        effect_size = float(
-            _ping_effsize(dotnet_vals.tolist(), go_vals.tolist(), eftype="cles")
-        )
+        cles = float(_ping_effsize(dotnet_vals.tolist(), go_vals.tolist(), eftype="cles"))
+        effect_size = abs(2 * cles - 1)  # convert CLES (0.5=no effect) to Cliff's delta magnitude (0=no effect)
     else:
         n1, n2 = len(dotnet_vals), len(go_vals)
-        effect_size = float((u_stat / (n1 * n2)) * 2 - 1)
+        effect_size = abs(float((u_stat / (n1 * n2)) * 2 - 1))
 
     label = _effect_label(effect_size)
 

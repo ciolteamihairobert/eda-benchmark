@@ -47,9 +47,9 @@ def test_bootstrap_ci_contains_true_diff() -> None:
     """The 95% bootstrap CI should bracket the true mean difference."""
     rng = np.random.default_rng(7)
     true_diff = 50
-    dotnet = rng.normal(200, 15, 500)
-    go = rng.normal(150, 15, 500)
-    result = _compute_test_result(dotnet, go, "Latency", "ms", n_bootstrap=500)
+    dotnet = rng.normal(200, 15, 2000)
+    go = rng.normal(150, 15, 2000)
+    result = _compute_test_result(dotnet, go, "Latency", "ms", n_bootstrap=2000)
 
     assert result.ci_low < true_diff < result.ci_high
 
