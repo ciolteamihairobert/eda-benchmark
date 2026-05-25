@@ -1,0 +1,12 @@
+{
+  "run": 7,
+  "run_id": "run-07",
+  "started_at": "2026-05-25T15:43:35Z",
+  "finished_at": "2026-05-25T15:53:10Z",
+  "duration_s": 575,
+  "dotnet_url": "http://localhost:8080",
+  "go_url": "http://localhost:8081",
+  "fault_delay_ms": 200,
+  "k6_version": "k6.exe v0.54.0 (commit/baba871c8a, go1.23.1, windows/amd64)",
+  "phases": ["warmup-30s", "steady-state", "spike", "fault-delay-200ms"]
+}

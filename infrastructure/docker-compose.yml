@@ -143,8 +143,8 @@ services:
       - "8080:8080"
     environment:
       Kafka__BootstrapServers: kafka:29092
-      Fault__DelayMs: "0"
-      Fault__FailRate: "0.0"
+      Fault__DelayMs: "${FAULT_DELAY_MS:-0}"
+      Fault__FailRate: "${FAULT_FAIL_RATE:-0.0}"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
       interval: 10s
@@ -168,8 +168,8 @@ services:
       - "8081:8081"
     environment:
       KAFKA_BOOTSTRAP: kafka:29092
-      FAULT_DELAY_MS: "0"
-      FAULT_FAIL_RATE: "0.0"
+      FAULT_DELAY_MS: "${FAULT_DELAY_MS:-0}"
+      FAULT_FAIL_RATE: "${FAULT_FAIL_RATE:-0.0}"
       WORKER_COUNT: "10"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8081/health"]

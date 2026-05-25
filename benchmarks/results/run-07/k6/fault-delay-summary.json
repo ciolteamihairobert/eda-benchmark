@@ -1,0 +1,156 @@
+{
+    "root_group": {
+        "groups": {},
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "metrics": {
+        "http_req_duration{expected_response:true}": {
+            "min": 0,
+            "med": 203.8598,
+            "max": 349.0092,
+            "p(90)": 212.8998,
+            "p(95)": 215.9503,
+            "avg": 117.95349506330628
+        },
+        "go_duration": {
+            "avg": 2.815304624036651,
+            "min": 0,
+            "med": 2.2782,
+            "max": 24.906,
+            "p(90)": 4.7064,
+            "p(95)": 5.7991,
+            "thresholds": {
+                "p(95)<3000": false
+            }
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "http_req_sending": {
+            "p(90)": 0,
+            "p(95)": 0.305,
+            "avg": 0.03282268277442201,
+            "min": 0,
+            "med": 0,
+            "max": 16.213
+        },
+        "http_req_duration": {
+            "p(95)": 215.4959,
+            "avg": 106.05061394501172,
+            "min": 0,
+            "med": 103.6943,
+            "max": 349.0092,
+            "p(90)": 212.5301
+        },
+        "http_req_blocked": {
+            "avg": 0.010184503228494063,
+            "min": 0,
+            "med": 0,
+            "max": 2.3991,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "go_success_rate": {
+            "passes": 3808,
+            "fails": 993,
+            "thresholds": {
+                "rate>0.99": true
+            },
+            "value": 0.7931680899812539
+        },
+        "vus": {
+            "max": 20,
+            "value": 1,
+            "min": 1
+        },
+        "go_errors": {
+            "count": 993,
+            "rate": 10.996199412278058
+        },
+        "dotnet_success_rate": {
+            "passes": 4801,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.99": false
+            },
+            "value": 1
+        },
+        "iteration_duration": {
+            "avg": 313.1409165382203,
+            "min": 291.893,
+            "med": 311.8735,
+            "max": 451.8192,
+            "p(90)": 320.5718,
+            "p(95)": 324.3731
+        },
+        "dotnet_duration": {
+            "p(90)": 215.4959,
+            "p(95)": 218.169,
+            "avg": 209.28592326598624,
+            "min": 182.4826,
+            "med": 208.5296,
+            "max": 349.0092,
+            "thresholds": {
+                "p(95)<3000": false
+            }
+        },
+        "http_req_waiting": {
+            "max": 349.0092,
+            "p(90)": 212.4746,
+            "p(95)": 215.3694,
+            "avg": 105.93684245990435,
+            "min": 0,
+            "med": 103.6943
+        },
+        "data_sent": {
+            "count": 2741818,
+            "rate": 30362.11226603565
+        },
+        "http_req_connecting": {
+            "avg": 0.0028628827327640068,
+            "min": 0,
+            "med": 0,
+            "max": 2.3991,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_failed": {
+            "passes": 993,
+            "fails": 8609,
+            "value": 0.10341595500937305
+        },
+        "data_received": {
+            "count": 2022006,
+            "rate": 22391.11902197654
+        },
+        "iterations": {
+            "count": 4801,
+            "rate": 53.164907732474276
+        },
+        "http_req_receiving": {
+            "avg": 0.08094880233284722,
+            "min": 0,
+            "med": 0,
+            "max": 13.7307,
+            "p(90)": 0.5100899999999999,
+            "p(95)": 0.5814
+        },
+        "http_reqs": {
+            "count": 9602,
+            "rate": 106.32981546494855
+        },
+        "vus_max": {
+            "value": 20,
+            "min": 20,
+            "max": 20
+        }
+    }
+}
